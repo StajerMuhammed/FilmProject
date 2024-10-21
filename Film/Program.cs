@@ -5,6 +5,7 @@ using Film.Services.ServiceFilm;
 using Film.Services.ServiceYonetmen;
 using Film.WebAPI.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace Film
 {
@@ -14,32 +15,33 @@ namespace Film
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
             // Add services to the container.
-            builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    // Döngüsel referanslarý önlemek için ReferenceHandler.Preserve kullan
-                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                });
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IFilmService, FilmService>();
             builder.Services.AddScoped<IYonetmenService, YönetmenService>();
 
-            // uygulamanýzýn SQL Server veritabanýyla etkili bir þekilde iletiþim kurabilmesi için gerekli yapýlandýrmayý hazýrlar.
+            // Veritabaný baðlantý dizesi yapýlandýrmasý
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<SampleDBContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            // Döngüsel referans problemini çözmek için JSON ayarlarýný yap
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                });
+
+            // Swagger yapýlandýrmasý
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Swagger ve Https ayarlarý
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
