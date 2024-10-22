@@ -24,8 +24,14 @@ namespace Film
 
             // Veritabaný baðlantý dizesi yapýlandýrmasý
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
             builder.Services.AddDbContext<SampleDBContext>(options =>
                 options.UseSqlServer(connectionString));
+
+
+
+
+
 
             // Döngüsel referans problemini çözmek için JSON ayarlarýný yap
             builder.Services.AddControllers()

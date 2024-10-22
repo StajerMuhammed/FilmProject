@@ -4,6 +4,7 @@ using Film.Datas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Film.Migrations
 {
     [DbContext(typeof(SampleDBContext))]
-    partial class SampleDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241022075044_UpdateYonetmenBirtDayToDateTime")]
+    partial class UpdateYonetmenBirtDayToDateTime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
