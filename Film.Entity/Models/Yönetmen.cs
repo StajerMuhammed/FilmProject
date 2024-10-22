@@ -6,8 +6,7 @@ namespace Film.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int BirtDay { get; set; }
-
+        public DateTime BirtDay { get; set; }
         public bool IsDeleted { get; set; }
 
         [InverseProperty("Yönetmen")]
