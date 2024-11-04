@@ -92,6 +92,7 @@ namespace Film.Services.ServiceYonetmen
             // Yönetmen bilgilerini güncelle
             existingYonetmen.Name = yönetmenForUpdate.Name;
             existingYonetmen.IsDeleted = yönetmenForUpdate.IsDeleted;
+            existingYonetmen.BirtDay = yönetmenForUpdate.BirtDay;
 
             // Film Id'ler üzerinden Filmler'i güncelle
             if (yönetmenForUpdate.FilmlerId != null)
