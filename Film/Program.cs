@@ -1,5 +1,7 @@
 using Film.Datas;
 using Film.Models;
+using Film.Service.Services.ServiceRole;
+using Film.Service.Services.ServiceUser;
 using Film.Services.ServiceCategory;
 using Film.Services.ServiceFilm;
 using Film.Services.ServiceYonetmen;
@@ -21,6 +23,9 @@ namespace Film
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IFilmService, FilmService>();
             builder.Services.AddScoped<IYonetmenService, YönetmenService>();
+            builder.Services.AddScoped<IRoleService,RoleService>();
+            builder.Services.AddScoped<IUserService,UserService>();
+
 
             // Veritabaný baðlantý dizesi yapýlandýrmasý
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

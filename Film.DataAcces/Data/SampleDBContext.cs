@@ -1,4 +1,5 @@
 ﻿using Film.Entity;
+using Film.Entity.Models;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -13,6 +14,8 @@ namespace Film.Datas
         public SampleDBContext()
         {
         }
+        public virtual DbSet<User> Users { get; set; } // DbSet adını çoğul yapabilirsiniz
+        public virtual DbSet<Role> Role { get; set; } // DbSet adını çoğul yapabilirsinizs
         public virtual DbSet<Film.Models.FilmModel> Films { get; set; } // DbSet adını çoğul yapabilirsiniz
         public virtual DbSet<Film.Models.Category> Categories { get; set; } // DbSet adını çoğul yapabilirsiniz
         public virtual DbSet<Film.Models.Yönetmen> Yonetmens { get; set; } // DbSet adını çoğul yapabilirsiniz
