@@ -19,27 +19,55 @@ namespace Film.Controllers
             _filmService = filmService;// Tüm kategorileri döndür
             _categoryService = categoryService;
         }
-
         // GET: api/Film
         [HttpGet]
-        public IActionResult GetFilms()
-        { 
+        public IActionResult GetFilms(int page = 1, int pageSize = 10)
+        {
             var films = _filmService.GetAllFilms();
 
-            var filmsDTO = films.Select(film => new FilmDTO
+            var totalRecords = films.Count();
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+            if (page > totalPages)
+            {
+                return NotFound(new
+                {
+                    Message = "Belirtilen sayfada görüntülenecek veri yok.",
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalRecords = totalRecords
+                });
+            }
+
+            var paginatedFilms = films
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var filmsDTO = paginatedFilms.Select(film => new FilmDTO
             {
                 CategoryId = film.CategoryId,
                 Id = film.Id,
                 KategoriTürü = film.Kategori.Tür,
-                YönetmenName =film.Yönetmen.Name,
-                YönetmenId =film.Yönetmen.Id,
+                YönetmenName = film.Yönetmen.Name,
+                YönetmenId = film.Yönetmen.Id,
                 Name = film.Name,
                 Overview = film.Overview,
                 Rating = film.Rating
             }).ToList();
 
-            return Ok(filmsDTO);
+            return Ok(new
+            {
+                TotalRecords = totalRecords,
+                TotalPages = totalPages,
+                Page = page,
+                PageSize = pageSize,
+                Data = filmsDTO
+            });
         }
+
+
+
 
         [HttpGet("[action]")]
         public IActionResult GetFilm(int id)

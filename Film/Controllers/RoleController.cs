@@ -19,25 +19,50 @@ namespace Film.WebAPI.Controllers
             _roleService = roleService; // Dependency Injection ile servis alınıyor
         }
 
-        // GET: api/role
+        // GET: api/Role
         [HttpGet]
-        public ActionResult<IEnumerable<object>> GetAllRoles()
+        public IActionResult GetAllRoles(int page = 1, int pageSize = 10)
         {
             var roles = _roleService.GetAllRoles();
 
-            var result = roles.Select(role => new
-            {
-                role.Id,
-                role.Name,
-                Users = role.Users.Select(user => new
-                {
-                    user.Id,
-                    user.Username
-                }).ToList() // Kullanıcıların sadece Id ve Username bilgisi
-            }).ToList();
+            var totalRecords = roles.Count();
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
 
-            return Ok(result); // Tüm rolleri kullanıcı Id ve Username bilgileriyle döndür
+            if (page > totalPages)
+            {
+                return NotFound(new
+                {
+                    Message = "Belirtilen sayfada görüntülenecek veri yok.",
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalRecords = totalRecords
+                });
+            }
+
+            var paginatedRoles = roles
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(role => new
+                {
+                    role.Id,
+                    role.Name,
+                    Users = role.Users.Select(user => new
+                    {
+                        user.Id,
+                        user.Username
+                    }).ToList()
+                }).ToList();
+
+            return Ok(new
+            {
+                TotalRecords = totalRecords,
+                TotalPages = totalPages,
+                Page = page,
+                PageSize = pageSize,
+                Data = paginatedRoles
+            });
         }
+
 
 
 

@@ -18,23 +18,50 @@ namespace Film.WebAPI.Controllers
           _userService = userService;
         }
 
+        // GET: api/User
         [HttpGet]
-        public IActionResult GetUsers()
+        public IActionResult GetUsers(int page = 1, int pageSize = 10)
         {
             var users = _userService.GetAllUsers();
 
-            var userDTO = users.Select(User => new UserDTO
-            {
-                Username = User.Username,
-                Id = User.Id,
-                Password = User.Password,
-                Email = User.Email,
-                Role = User.Role.Name,
-                RoleId = User.Role.Id,
-            }).ToList();
+            var totalRecords = users.Count();
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
 
-            return Ok(userDTO);
+            if (page > totalPages)
+            {
+                return NotFound(new
+                {
+                    Message = "Belirtilen sayfada görüntülenecek veri yok.",
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalRecords = totalRecords
+                });
+            }
+
+            var paginatedUsers = users
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(user => new UserDTO
+                {
+                    Username = user.Username,
+                    Id = user.Id,
+                    Password = user.Password,
+                    Email = user.Email,
+                    Role = user.Role.Name,
+                    RoleId = user.Role.Id,
+                }).ToList();
+
+            return Ok(new
+            {
+                TotalRecords = totalRecords,
+                TotalPages = totalPages,
+                Page = page,
+                PageSize = pageSize,
+                Data = paginatedUsers
+            });
         }
+
+
 
         [HttpGet("[action]")]
         public IActionResult GetUser(int id)

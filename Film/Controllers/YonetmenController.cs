@@ -21,19 +21,46 @@ namespace Film.Controllers
 
         // GET: api/Yonetmen
         [HttpGet]
-        public IActionResult GetAllYonetmen()
+        public IActionResult GetAllYonetmen(int page = 1, int pageSize = 10)
         {
             var yonetmenler = _yonetmenService.GetAllYonetmen();
-            var yonetmenlerDTO = yonetmenler.Select(yonetmen => new YönetmenDTO
-            {
-                BirtDay = yonetmen.BirtDay,
-                Id = yonetmen.Id,
-                Name = yonetmen.Name,
-                FilmAdları = yonetmen.Filmler.Select(f => f.Name).ToList() // Film adlarını düz listeye ekleyin
-            }).ToList();
 
-            return Ok(yonetmenlerDTO);
+            var totalRecords = yonetmenler.Count();
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+            if (page > totalPages)
+            {
+                return NotFound(new
+                {
+                    Message = "Belirtilen sayfada görüntülenecek veri yok.",
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalRecords = totalRecords
+                });
+            }
+
+            var paginatedYonetmenler = yonetmenler
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(yonetmen => new YönetmenDTO
+                {
+                    BirtDay = yonetmen.BirtDay,
+                    Id = yonetmen.Id,
+                    Name = yonetmen.Name,
+                    FilmAdları = yonetmen.Filmler.Select(f => f.Name).ToList()
+                }).ToList();
+
+            return Ok(new
+            {
+                TotalRecords = totalRecords,
+                TotalPages = totalPages,
+                Page = page,
+                PageSize = pageSize,
+                Data = paginatedYonetmenler
+            });
         }
+
+
 
 
         [HttpGet("[action]/{id}")]

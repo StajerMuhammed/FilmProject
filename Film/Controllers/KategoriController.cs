@@ -17,12 +17,42 @@ namespace Film.Controllers
             _categoryService = categoryService; // Dependency Injection ile servis alınıyor
         }
 
-        // GET: api/category
+        // GET: api/Category
         [HttpGet]
-        public ActionResult<IEnumerable<Category>> GetCategories()
+        public IActionResult GetCategories(int page = 1, int pageSize = 10)
         {
-            return Ok(_categoryService.GetAllCategories()); // Tüm kategorileri döndür
+            var categories = _categoryService.GetAllCategories();
+
+            var totalRecords = categories.Count();
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+            if (page > totalPages)
+            {
+                return NotFound(new
+                {
+                    Message = "Belirtilen sayfada görüntülenecek veri yok.",
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalRecords = totalRecords
+                });
+            }
+
+            var paginatedCategories = categories
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            return Ok(new
+            {
+                TotalRecords = totalRecords,
+                TotalPages = totalPages,
+                Page = page,
+                PageSize = pageSize,
+                Data = paginatedCategories
+            });
         }
+
+
 
         // GET: api/category/{id}
         [HttpGet("{id}")]
