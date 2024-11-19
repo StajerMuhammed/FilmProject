@@ -21,7 +21,7 @@ namespace Film.Controllers
         }
         // GET: api/Film
         [HttpGet]
-        public IActionResult GetFilms(int page = 1, int pageSize = 10)
+        public IActionResult GetFilms(int page = 1, int pageSize = 5)
         {
             var films = _filmService.GetAllFilms();
 

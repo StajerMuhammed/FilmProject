@@ -21,7 +21,7 @@ namespace Film.WebAPI.Controllers
 
         // GET: api/Role
         [HttpGet]
-        public IActionResult GetAllRoles(int page = 1, int pageSize = 10)
+        public IActionResult GetAllRoles(int page = 1, int pageSize = 2)
         {
             var roles = _roleService.GetAllRoles();
 

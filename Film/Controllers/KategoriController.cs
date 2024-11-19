@@ -19,7 +19,7 @@ namespace Film.Controllers
 
         // GET: api/Category
         [HttpGet]
-        public IActionResult GetCategories(int page = 1, int pageSize = 10)
+        public IActionResult GetCategories(int page = 1, int pageSize = 5)
         {
             var categories = _categoryService.GetAllCategories();
 

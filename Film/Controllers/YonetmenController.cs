@@ -21,7 +21,7 @@ namespace Film.Controllers
 
         // GET: api/Yonetmen
         [HttpGet]
-        public IActionResult GetAllYonetmen(int page = 1, int pageSize = 10)
+        public IActionResult GetAllYonetmen(int page = 1, int pageSize = 5)
         {
             var yonetmenler = _yonetmenService.GetAllYonetmen();
 

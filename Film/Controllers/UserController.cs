@@ -20,7 +20,7 @@ namespace Film.WebAPI.Controllers
 
         // GET: api/User
         [HttpGet]
-        public IActionResult GetUsers(int page = 1, int pageSize = 10)
+        public IActionResult GetUsers(int page = 1, int pageSize = 5)
         {
             var users = _userService.GetAllUsers();
 
