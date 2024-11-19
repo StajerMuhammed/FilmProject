@@ -54,7 +54,7 @@ namespace Film.Services.ServiceFilm
             {
                 Name = filmForInsertion.Name,
                 CategoryId = filmForInsertion.CategoryId,
-                YönetmenId = filmForInsertion.YönetmenId,
+                YönetmenId = filmForInsertion.YönetmenId, 
                 Overview = filmForInsertion.Overview,
                 Rating = filmForInsertion.Rating,
             };

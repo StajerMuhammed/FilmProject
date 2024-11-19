@@ -105,7 +105,7 @@ namespace Film.Controllers
             var filmDto = new FilmDTO
             {
                 CategoryId = film.CategoryId,
-
+                YönetmenId = film.YönetmenId,
 
                 Id = film.Id,
                 Name = film.Name,
