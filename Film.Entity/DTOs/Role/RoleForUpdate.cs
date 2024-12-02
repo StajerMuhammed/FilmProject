@@ -9,7 +9,7 @@ namespace Film.Entity.DTOs.Role
     public class RoleForUpdate
     {
         public int Id { get; set; } // Role ID
-        public string Name { get; set; } // Role adı
+        public string Name { get; set; } = null!; // Role adı
         public bool IsDeleted { get; set; }
     }
 }

@@ -2,6 +2,6 @@
 {
     public class CategoryForInsertion
     {
-        public string Tür { get; set; }
+        public string Tür { get; set; } = null!;
     }
 }

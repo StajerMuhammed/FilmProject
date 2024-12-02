@@ -18,7 +18,7 @@ namespace Film.Models
         public string Overview { get; set; } = null!;
         public double Rating { get; set; }
         public bool IsDeleted { get; set; }
-        public Yönetmen Yönetmen { get; set; }
+        public Yönetmen Yönetmen { get; set; } = null!;
         [ForeignKey("Yönetmen")]
         public int YönetmenId { get; set; }
 

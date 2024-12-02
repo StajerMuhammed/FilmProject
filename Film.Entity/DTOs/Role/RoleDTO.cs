@@ -9,7 +9,7 @@ namespace Film.Entity.DTOs.Role
         public class RoleDTO
         {
             public int Id { get; set; }
-            public string Name { get; set; }
-            public List<string> UserNames { get; set; } // Sadece kullanıcı isimleri
+            public string Name { get; set; } = null!;
+            public List<string> UserNames { get; set; } = null!; // Sadece kullanıcı isimleri
         }
 }

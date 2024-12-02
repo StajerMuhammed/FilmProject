@@ -3,7 +3,7 @@
     public class CategoriDTO
     {
         public int Id { get; set; }
-        public string Tür { get; set; }
+        public string Tür { get; set; } = null!;
 
     }
 }

@@ -48,7 +48,7 @@ namespace Film.Controllers
             {
                 CategoryId = film.CategoryId,
                 Id = film.Id,
-                KategoriTürü = film.Kategori.Tür,
+                KategoriTürü = film.Kategori!.Tür,
                 YönetmenName = film.Yönetmen.Name,
                 YönetmenId = film.Yönetmen.Id,
                 Name = film.Name,

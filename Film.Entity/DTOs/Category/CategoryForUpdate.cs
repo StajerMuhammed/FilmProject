@@ -6,7 +6,7 @@ namespace Film.DTOs.Category
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "Tür alanı zorunludur.")]
-        public string Tür { get; set; }
+        public string Tür { get; set; } = null!;
         public bool IsDeleted { get; set; }
     }
 }
