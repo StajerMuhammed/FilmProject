@@ -28,5 +28,9 @@
 		<ProjectReference Include="..\Film.Service\Film.Service.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Images\" />
+	</ItemGroup>
+
 </Project>
 

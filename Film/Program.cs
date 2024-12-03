@@ -23,9 +23,8 @@ namespace Film
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IFilmService, FilmService>();
             builder.Services.AddScoped<IYonetmenService, YönetmenService>();
-            builder.Services.AddScoped<IRoleService,RoleService>();
-            builder.Services.AddScoped<IUserService,UserService>();
-
+            builder.Services.AddScoped<IRoleService, RoleService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
             // Veritabaný baðlantý dizesi yapýlandýrmasý
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -33,10 +32,16 @@ namespace Film
             builder.Services.AddDbContext<SampleDBContext>(options =>
                 options.UseSqlServer(connectionString));
 
-
-
-
-
+            // CORS yapýlandýrmasý
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin", policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000") // React uygulamanýzýn çalýþtýðý adres
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
 
             // Döngüsel referans problemini çözmek için JSON ayarlarýný yap
             builder.Services.AddControllers()
@@ -52,6 +57,9 @@ namespace Film
 
             var app = builder.Build();
 
+            // CORS Middleware ekle
+            app.UseCors("AllowSpecificOrigin");
+
             // Swagger ve Https ayarlarý
             if (app.Environment.IsDevelopment())
             {
@@ -59,7 +67,7 @@ namespace Film
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseAuthorization();
 
             app.MapControllers();

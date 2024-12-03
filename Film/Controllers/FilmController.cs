@@ -4,6 +4,7 @@ using Film.Services.ServiceCategory;
 using Film.Services.ServiceFilm;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Film.Controllers
 {
@@ -48,12 +49,13 @@ namespace Film.Controllers
             {
                 CategoryId = film.CategoryId,
                 Id = film.Id,
-                KategoriTürü = film.Kategori!.Tür,
-                YönetmenName = film.Yönetmen.Name,
-                YönetmenId = film.Yönetmen.Id,
+                KategoriTürü = film.Kategori?.Tür ?? "Kategori Yok", // Null kontrolü
+                YönetmenName = film.Yönetmen?.Name ?? "Yönetmen Yok", // Null kontrolü
+                YönetmenId = film.Yönetmen?.Id ?? 0, // Null kontrolü
                 Name = film.Name,
                 Overview = film.Overview,
-                Rating = film.Rating
+                Rating = film.Rating,
+                ImageUrl = film.ImageUrl ?? "/images/default.jpg"  // ImageUrl null ise varsayılan resim 
             }).ToList();
 
             return Ok(new
@@ -67,9 +69,7 @@ namespace Film.Controllers
         }
 
 
-
-
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{id}")]
         public IActionResult GetFilm(int id)
         {
             var film = _filmService.GetFilmById(id);
@@ -81,50 +81,84 @@ namespace Film.Controllers
             {
                 CategoryId = film.CategoryId,
                 Id = film.Id,
-                KategoriTürü = film.Kategori?.Tür,  // Kategori null olabilir
-                YönetmenName = film.Yönetmen?.Name,  // Yönetmen null olabilir
+                KategoriTürü = film.Kategori?.Tür ?? "Kategori Yok",  // Kategori null olabilir
+                YönetmenName = film.Yönetmen?.Name ?? "Yönetmen Yok",  // Yönetmen null olabilir
                 YönetmenId = film.Yönetmen?.Id ?? 0,  // Yönetmen null olabilir
                 Name = film.Name,
                 Overview = film.Overview,
                 Rating = film.Rating,
+                ImageUrl = film.ImageUrl ?? "/images/default.jpg"  // ImageUrl null ise varsayılan resim
             };
 
             return Ok(filmDTO); // Tek bir FilmDTO döndür
         }
 
 
-        // POST: api/film
         [HttpPost("[action]")]
-        public  ActionResult<Models.FilmModel> CreateFilm([FromBody] FilmForInsertion filmForInsertion)
+        public async Task<ActionResult<FilmDTO>> CreateFilm([FromBody] FilmForInsertion filmForInsertion)
         {
             if (filmForInsertion == null)
-                return BadRequest(); // Geçersiz istek
+                return BadRequest("Geçersiz istek"); // Geçersiz istek
 
+            // Resim URL'si yoksa hata ver
+            if (string.IsNullOrEmpty(filmForInsertion.ImageUrl))
+            {
+                return BadRequest("Resim URL'si gerekli");
+            }
+
+            // Film oluşturuluyor
             var film = _filmService.CreateFilm(filmForInsertion);
 
+            // Film DTO oluşturuluyor
             var filmDto = new FilmDTO
             {
                 CategoryId = film.CategoryId,
                 YönetmenId = film.YönetmenId,
-
                 Id = film.Id,
                 Name = film.Name,
                 Overview = film.Overview,
-                Rating = film.Rating
+                Rating = film.Rating,
+                // Resim URL'si sağlandıysa ekliyoruz
+                ImageUrl = film.ImageUrl
             };
 
-            return Ok(filmDto); // Yeni kategori oluşturulunca 201 döndür
+            return CreatedAtAction(nameof(GetFilm), new { id = film.Id }, filmDto); // Yeni film oluşturulunca 201 döndür
         }
-        // PUT: api/Film/{id}
-        [HttpPut("[action]")]
-        public ActionResult UpdateFilm([FromBody] FilmForUpdate filmForUpdate)
+
+        [HttpPut("[action]/{id}")]
+        public async Task<ActionResult> UpdateFilm(int id, [FromBody] FilmForUpdate filmForUpdate)
         {
-            if (filmForUpdate == null || filmForUpdate.Id != filmForUpdate.Id)
-                return BadRequest(); // ID uyuşmazlığı varsa 400 döndür
+            if (filmForUpdate == null || filmForUpdate.Id != id)
+                return BadRequest("ID uyuşmazlığı"); // ID uyuşmazlığı varsa 400 döndür
+
+            // Resim URL'si yoksa hata ver
+            if (string.IsNullOrEmpty(filmForUpdate.ImageUrl))
+            {
+                return BadRequest("Resim URL'si gerekli");
+            }
 
             var updatedFilm = _filmService.UpdateFilm(filmForUpdate);
-            return Ok(updatedFilm); // Güncelleme başarılıysa 204 döndür
+
+            if (updatedFilm == null)
+                return NotFound(); // Eğer güncellenen film bulunamadıysa 404 döndür
+
+            var filmDTO = new FilmDTO
+            {
+                CategoryId = updatedFilm.CategoryId,
+                Id = updatedFilm.Id,
+                KategoriTürü = updatedFilm.Kategori?.Tür ?? "Kategori Yok",
+                YönetmenName = updatedFilm.Yönetmen?.Name ?? "Yönetmen Yok",
+                YönetmenId = updatedFilm.Yönetmen?.Id ?? 0,
+                Name = updatedFilm.Name,
+                Overview = updatedFilm.Overview,
+                Rating = updatedFilm.Rating,
+                // Gerçek resim URL'si burada ekleniyor
+                ImageUrl = updatedFilm.ImageUrl
+            };
+
+            return Ok(filmDTO); // Güncelleme başarılıysa 200 döndür
         }
+
         // DELETE: api/Film/{id}
         [HttpDelete("[action]")]
         public ActionResult DeleteFilm(int id)
