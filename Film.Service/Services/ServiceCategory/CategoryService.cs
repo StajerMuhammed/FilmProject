@@ -1,6 +1,7 @@
 ﻿using Film.Datas; // DbContext sınıfı
 using Film.DTOs.Category;
 using Film.Models; // Modeller
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,10 +16,16 @@ namespace Film.Services.ServiceCategory
             _context = context;
         }
 
-        public IEnumerable<Category> GetAllCategories() // Metot adını güncelledik
+        public IEnumerable<Category> GetAllCategories()
         {
-            return _context.Categories.Where(c => !c.IsDeleted).ToList(); // Silinmemiş tüm kategorileri döndür
+            var categories = _context.Categories
+                .Where(c => !c.IsDeleted) // Silinmemiş kategorileri filtrele
+                .Include(c => c.Films.Where(f => !f.IsDeleted)) // Silinmemiş filmleri filtrele
+                .ToList();
+
+            return categories;
         }
+
 
         public Category GetCategoryById(int id)
         {

@@ -12,6 +12,6 @@ namespace Film.DTOs.Yönetmen
 
         public bool IsDeleted { get; set; }
 
-        public virtual ICollection<int> FilmlerId { get; set; } = null!;
+        public virtual ICollection<int>? FilmlerId { get; set; } 
     }
 }

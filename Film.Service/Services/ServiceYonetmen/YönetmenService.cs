@@ -30,11 +30,16 @@ namespace Film.Services.ServiceYonetmen
 
             };
 
-            foreach (var id in yönetmenForInsertion.FilmlerId)
-            {
-                var film = _filmservice.GetFilmById(id);
-                yonetmen.Filmler.Add(film);
+            if (yönetmenForInsertion.FilmlerId !=null)
+            { 
+                foreach (var id in yönetmenForInsertion.FilmlerId)
+                {
+                    var film = _filmservice.GetFilmById(id);
+                    yonetmen.Filmler.Add(film);
+                }
+
             }
+          
 
             _context.Yonetmens.Add(yonetmen);
             _context.SaveChanges();
@@ -57,7 +62,7 @@ namespace Film.Services.ServiceYonetmen
         {
             // Filmleri de dahil etmek için Include kullanıyoruz
             var yonetmen = _context.Yonetmens
-                .Include(y => y.Filmler) // Filmleri dahil et
+                .Include(y => y.Filmler.Where(f => !f.IsDeleted)) // Filmleri dahil et
                 .Where(y => !y.IsDeleted)  // Silinmemiş olanları getir
                 .ToList();
 

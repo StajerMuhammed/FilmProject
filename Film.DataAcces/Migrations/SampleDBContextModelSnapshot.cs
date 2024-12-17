@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Film.Migrations
+namespace Film.DataAcces.Migrations
 {
     [DbContext(typeof(SampleDBContext))]
     partial class SampleDBContextModelSnapshot : ModelSnapshot
@@ -21,6 +21,33 @@ namespace Film.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Film.Entity.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FilmId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FilmId");
+
+                    b.ToTable("Orders");
+                });
 
             modelBuilder.Entity("Film.Entity.Models.Role", b =>
                 {
@@ -119,6 +146,9 @@ namespace Film.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<double>("Rating")
                         .HasColumnType("float");
 
@@ -156,6 +186,17 @@ namespace Film.Migrations
                     b.ToTable("Yonetmens");
                 });
 
+            modelBuilder.Entity("Film.Entity.Models.Order", b =>
+                {
+                    b.HasOne("Film.Models.FilmModel", "Film")
+                        .WithMany("Orders")
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
+                });
+
             modelBuilder.Entity("Film.Entity.Models.User", b =>
                 {
                     b.HasOne("Film.Entity.Models.Role", "Role")
@@ -170,7 +211,7 @@ namespace Film.Migrations
             modelBuilder.Entity("Film.Models.FilmModel", b =>
                 {
                     b.HasOne("Film.Models.Category", "Kategori")
-                        .WithMany()
+                        .WithMany("Films")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -189,6 +230,16 @@ namespace Film.Migrations
             modelBuilder.Entity("Film.Entity.Models.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Film.Models.Category", b =>
+                {
+                    b.Navigation("Films");
+                });
+
+            modelBuilder.Entity("Film.Models.FilmModel", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Film.Models.Yönetmen", b =>

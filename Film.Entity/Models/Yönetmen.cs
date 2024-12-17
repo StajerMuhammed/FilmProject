@@ -10,7 +10,7 @@ namespace Film.Models
         public bool IsDeleted { get; set; }
 
         [InverseProperty("Yönetmen")]
-        public virtual ICollection<FilmModel> Filmler { get; set; } = null!;
+        public virtual ICollection<FilmModel>? Filmler { get; set; } 
 
 
     }

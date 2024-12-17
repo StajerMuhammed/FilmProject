@@ -1,5 +1,6 @@
 using Film.Datas;
 using Film.Models;
+using Film.Service.Services.ServiceOrder;
 using Film.Service.Services.ServiceRole;
 using Film.Service.Services.ServiceUser;
 using Film.Services.ServiceCategory;
@@ -20,6 +21,7 @@ namespace Film
             // Add services to the container.
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
+            builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IFilmService, FilmService>();
             builder.Services.AddScoped<IYonetmenService, YönetmenService>();

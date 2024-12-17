@@ -68,6 +68,7 @@ namespace Film.Services.ServiceFilm
                 Overview = filmForInsertion.Overview,
                 Rating = filmForInsertion.Rating,
                 ImageUrl = filmForInsertion.ImageUrl,
+                Price   = filmForInsertion.Price
             };
 
             _context.Films.Add(film);
@@ -101,6 +102,7 @@ namespace Film.Services.ServiceFilm
             existingFilm.Rating = filmForUpdate.Rating;
             existingFilm.IsDeleted = filmForUpdate.IsDeleted;
             existingFilm.ImageUrl = filmForUpdate.ImageUrl;
+            existingFilm.Price = filmForUpdate.Price;
 
             _context.SaveChanges();
 

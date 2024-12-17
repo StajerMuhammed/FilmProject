@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Film.Migrations
+namespace Film.DataAcces.Migrations
 {
     [DbContext(typeof(SampleDBContext))]
-    [Migration("20241104111147_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241216140012_test2")]
+    partial class test2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,33 @@ namespace Film.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Film.Entity.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FilmId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FilmId");
+
+                    b.ToTable("Orders");
+                });
+
             modelBuilder.Entity("Film.Entity.Models.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -33,8 +60,10 @@ namespace Film.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -51,18 +80,18 @@ namespace Film.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -103,6 +132,10 @@ namespace Film.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -115,6 +148,9 @@ namespace Film.Migrations
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<double>("Rating")
                         .HasColumnType("float");
@@ -146,12 +182,22 @@ namespace Film.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Yonetmens");
+                });
+
+            modelBuilder.Entity("Film.Entity.Models.Order", b =>
+                {
+                    b.HasOne("Film.Models.FilmModel", "Film")
+                        .WithMany("Orders")
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
                 });
 
             modelBuilder.Entity("Film.Entity.Models.User", b =>
@@ -168,7 +214,7 @@ namespace Film.Migrations
             modelBuilder.Entity("Film.Models.FilmModel", b =>
                 {
                     b.HasOne("Film.Models.Category", "Kategori")
-                        .WithMany()
+                        .WithMany("Films")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -187,6 +233,16 @@ namespace Film.Migrations
             modelBuilder.Entity("Film.Entity.Models.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Film.Models.Category", b =>
+                {
+                    b.Navigation("Films");
+                });
+
+            modelBuilder.Entity("Film.Models.FilmModel", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Film.Models.Yönetmen", b =>

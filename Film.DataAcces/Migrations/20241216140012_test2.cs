@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace Film.Migrations
+namespace Film.DataAcces.Migrations
 {
     /// <inheritdoc />
-    public partial class Yonetmen : Migration
+    public partial class test2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

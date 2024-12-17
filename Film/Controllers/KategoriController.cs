@@ -18,10 +18,15 @@ namespace Film.Controllers
         }
 
         // GET: api/Category
-        [HttpGet]
-        public IActionResult GetCategories(int page = 1, int pageSize = 5)
+        [HttpGet]   
+        public IActionResult GetCategories(string? search = null, int page = 1, int pageSize = 5)
         {
             var categories = _categoryService.GetAllCategories();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                categories = categories.Where(f => f.Tür.Replace(" ", "").ToLower().Contains(search.Replace(" ", "").ToLower())).ToList();
+            }
 
             var totalRecords = categories.Count();
             var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);

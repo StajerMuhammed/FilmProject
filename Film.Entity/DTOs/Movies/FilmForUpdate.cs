@@ -17,5 +17,7 @@ namespace Film.DTOs.Movies
 
         public int YönetmenId { get; set; }
         public string ImageUrl { get; set; } = null!;
+
+        public decimal Price { get; set; } = 0.0m;
     }
 }

@@ -9,6 +9,6 @@ namespace Film.Models
         [Required(ErrorMessage = "Tür alanı zorunludur.")]
         public  string Tür { get; set; } = null!;
         public bool IsDeleted { get; set; }
-
+        public ICollection<FilmModel> Films { get; set; } = new List<FilmModel>();
     }
 }

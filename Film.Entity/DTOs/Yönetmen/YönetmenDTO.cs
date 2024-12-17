@@ -5,6 +5,6 @@
         public int Id { get; set; }
         public string? Name { get; set; }
         public DateTime BirtDay { get; set; }
-        public virtual ICollection<string> FilmAdları { get; set; } = null!;
+        public virtual ICollection<string>? FilmAdları { get; set; }
     }
 }

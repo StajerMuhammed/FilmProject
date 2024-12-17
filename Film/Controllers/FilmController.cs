@@ -20,11 +20,15 @@ namespace Film.Controllers
             _filmService = filmService;// Tüm kategorileri döndür
             _categoryService = categoryService;
         }
-        // GET: api/Film
         [HttpGet]
-        public IActionResult GetFilms(int page = 1, int pageSize = 5)
+        public IActionResult GetFilms(string? search = null, int page = 1, int pageSize = 5)
         {
             var films = _filmService.GetAllFilms();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                films = films.Where(f => f.Name.Replace(" ", "").ToLower().Contains(search.Replace(" ", "").ToLower())).ToList();
+            }
 
             var totalRecords = films.Count();
             var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
@@ -49,13 +53,14 @@ namespace Film.Controllers
             {
                 CategoryId = film.CategoryId,
                 Id = film.Id,
-                KategoriTürü = film.Kategori?.Tür ?? "Kategori Yok", // Null kontrolü
-                YönetmenName = film.Yönetmen?.Name ?? "Yönetmen Yok", // Null kontrolü
-                YönetmenId = film.Yönetmen?.Id ?? 0, // Null kontrolü
+                KategoriTürü = film.Kategori?.Tür ?? "Kategori Yok",
+                YönetmenName = film.Yönetmen?.Name ?? "Yönetmen Yok",
+                YönetmenId = film.Yönetmen?.Id ?? 0,
                 Name = film.Name,
                 Overview = film.Overview,
                 Rating = film.Rating,
-                ImageUrl = film.ImageUrl ?? "/images/default.jpg"  // ImageUrl null ise varsayılan resim 
+                ImageUrl = film.ImageUrl ?? "/images/default.jpg",
+                Price = film.Price,
             }).ToList();
 
             return Ok(new
@@ -67,6 +72,8 @@ namespace Film.Controllers
                 Data = filmsDTO
             });
         }
+
+
 
 
         [HttpGet("[action]/{id}")]
@@ -87,7 +94,8 @@ namespace Film.Controllers
                 Name = film.Name,
                 Overview = film.Overview,
                 Rating = film.Rating,
-                ImageUrl = film.ImageUrl ?? "/images/default.jpg"  // ImageUrl null ise varsayılan resim
+                ImageUrl = film.ImageUrl ?? "/images/default.jpg",  // ImageUrl null ise varsayılan resim
+                Price = film.Price,
             };
 
             return Ok(filmDTO); // Tek bir FilmDTO döndür
@@ -119,7 +127,11 @@ namespace Film.Controllers
                 Overview = film.Overview,
                 Rating = film.Rating,
                 // Resim URL'si sağlandıysa ekliyoruz
-                ImageUrl = film.ImageUrl
+                ImageUrl = film.ImageUrl,
+                Price= film.Price,
+                YönetmenName=film.Yönetmen?.Name,
+                KategoriTürü=film.Kategori?.Tür
+                
             };
 
             return CreatedAtAction(nameof(GetFilm), new { id = film.Id }, filmDto); // Yeni film oluşturulunca 201 döndür
@@ -152,6 +164,7 @@ namespace Film.Controllers
                 Name = updatedFilm.Name,
                 Overview = updatedFilm.Overview,
                 Rating = updatedFilm.Rating,
+                Price = updatedFilm.Price,
                 // Gerçek resim URL'si burada ekleniyor
                 ImageUrl = updatedFilm.ImageUrl
             };
@@ -160,7 +173,7 @@ namespace Film.Controllers
         }
 
         // DELETE: api/Film/{id}
-        [HttpDelete("[action]")]
+        [HttpDelete("[action]/{id}")]
         public ActionResult DeleteFilm(int id)
         {
             _filmService.DeleteFilm(id);

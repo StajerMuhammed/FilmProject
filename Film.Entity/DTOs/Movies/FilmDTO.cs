@@ -20,6 +20,7 @@ namespace Film.DTOs.Movies
         public double Rating { get; set; }
 
         public string ImageUrl { get; set; } = null!;
+        public decimal Price { get; set; } = 0.0m;
 
     }
 }
